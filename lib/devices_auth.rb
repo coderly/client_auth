@@ -1,5 +1,5 @@
 require "devices_auth/version"
 
 module DevicesAuth
-  # Your code goes here...
+  require 'Devices_auth/engine' if defined?(Rails)
 end

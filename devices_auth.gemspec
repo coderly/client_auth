@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = DevicesAuth::VERSION
   spec.authors       = ["Israel De La Hoz"]
   spec.email         = ["israeldelahoz@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{this gem enables sevarl devices authentication for apis}
+  spec.summary       = %q{ authenticate by device and enable current device}
   spec.homepage      = ""
   spec.license       = "MIT"
 
