@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = DevicesAuth::VERSION
   spec.authors       = ["Israel De La Hoz"]
   spec.email         = ["israeldelahoz@gmail.com"]
-  spec.description   = %q{this gem enables sevarl devices authentication for apis}
+  spec.description   = %q{this gem enables several devices authentication for apis}
   spec.summary       = %q{ authenticate by device and enable current device}
   spec.homepage      = ""
   spec.license       = "MIT"
@@ -20,4 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  s.add_development_dependency "rspec"
+  
+  spec.add_dependency("activerecord", "~> 4.0.1")
+  
+  
 end
