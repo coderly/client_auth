@@ -1,6 +1,9 @@
 require 'securerandom'
 module DevicesAuth
   class Device < ActiveRecord::Base
+    
+    self.table_name = 'devices_auth_devices'
+    
     belongs_to :owner, polymorphic: true
 
     before_save :ensure_auth_token

@@ -1,5 +1,5 @@
 require "devices_auth/version"
-
+require 'active_support/core_ext/module'
 module DevicesAuth
   require 'Devices_auth/engine' if defined?(Rails)
   
