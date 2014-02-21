@@ -6,14 +6,17 @@ class DevicesAuth::InstallGenerator < Rails::Generators::Base
   
   desc "generates device model migration"
   
-  source_root File.expand_path('../../../../db/migrate', __FILE__) 
- 
+  source_root File.expand_path('../templates', __FILE__) 
+   
   def self.next_migration_number(path)
     ActiveRecord::Generators::Base.next_migration_number(path)
   end
   
+  def create_initializer_file
+    template 'initializer.rb', 'config/initializers/devices_auth.rb'
+  end
   
   def generate_migration
-      migration_template 'create_devices.rb', 'db/migrate/create_devices'
+    migration_template '../../../../db/migrate/create_devices.rb', 'db/migrate/create_devices'
   end
 end
