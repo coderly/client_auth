@@ -1,10 +1,10 @@
 require 'spec_helper'
-require 'devices_auth/token_auth'
+require 'client_auth/token_auth'
 
 
-describe DevicesAuth::TokenAuth do
+describe ClientAuth::TokenAuth do
   
-  let(:token_auth){ DevicesAuth::TokenAuth.new(params) }
+  let(:token_auth){ ClientAuth::TokenAuth.new(params) }
   
   subject{ token_auth }
   
@@ -14,7 +14,7 @@ describe DevicesAuth::TokenAuth do
   
   describe "when device doesnt exists" do
     
-    let(:device_token){ DevicesAuth::TokenAuth.new({token: 'abcd', device_id: '123'}).login }
+    let(:device_token){ ClientAuth::TokenAuth.new({token: 'abcd', device_id: '123'}).login }
         
     let(:params){ { token: device_token } }
     

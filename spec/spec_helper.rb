@@ -1,4 +1,4 @@
-require 'devices_auth'
+require 'client_auth'
 require 'active_record'
 
 ENV["RAILS_ENV"] = "test"

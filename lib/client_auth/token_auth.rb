@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../app/models/devices_auth/device'
-module DevicesAuth
+require File.dirname(__FILE__) + '/../../app/models/client_auth/device'
+module ClientAuth
   class TokenAuth
     
     DEVISE_TOKEN_LENGTH = 20
@@ -22,7 +22,7 @@ module DevicesAuth
     def login
       user = resource_class.find_by(resource_key => token)
 
-      device = DevicesAuth::Device.find_or_create_for_key(device_id)
+      device = ClientAuth::Device.find_or_create_for_key(device_id)
       device.assign(user)
 
       device.token
@@ -46,7 +46,7 @@ module DevicesAuth
     attr_reader :params
 
     def current_device
-      DevicesAuth::Device.find_by(token: token)
+      ClientAuth::Device.find_by(token: token)
     end
 
     def token
@@ -58,11 +58,11 @@ module DevicesAuth
     end
     
     def resource_class
-      DevicesAuth.devices_owner_model.to_s.capitalize.constantize
+      ClientAuth.devices_owner_model.to_s.capitalize.constantize
     end
     
     def resource_key
-      DevicesAuth.devices_owner_key
+      ClientAuth.devices_owner_key
     end
     
   end

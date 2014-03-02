@@ -1,4 +1,4 @@
-# DevicesAuth
+# ClientAuth
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'devices_auth'
+    gem 'client_auth'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install devices_auth
+    $ gem install client_auth
 
 ## Usage
 

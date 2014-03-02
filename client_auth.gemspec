@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'devices_auth/version'
+require 'client_auth/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "devices_auth"
-  spec.version       = DevicesAuth::VERSION
+  spec.name          = "client_auth"
+  spec.version       = ClientAuth::VERSION
   spec.authors       = ["Israel De La Hoz"]
   spec.email         = ["israeldelahoz@gmail.com"]
   spec.description   = %q{this gem enables several devices authentication for apis}

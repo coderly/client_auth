@@ -1,8 +1,8 @@
 require 'securerandom'
-module DevicesAuth
+module ClientAuth
   class Device < ActiveRecord::Base
     
-    self.table_name = 'devices_auth_devices'
+    self.table_name = 'client_auth_devices'
     
     belongs_to :owner, polymorphic: true
 

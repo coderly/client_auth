@@ -1,6 +1,6 @@
 ActiveRecord::Schema.define(version: 20140212210648) do
   
-  create_table "devices_auth_devices", force: true do |t|
+  create_table "client_auth_devices", force: true do |t|
     t.string   "key",                           null: false
     t.string   "token",                         null: false
     t.integer  "owner_id"

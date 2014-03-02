@@ -1,7 +1,7 @@
 require 'rails/generators/migration'
 require 'rails/generators/active_record'
 
-class DevicesAuth::InstallGenerator < Rails::Generators::Base
+class ClientAuth::InstallGenerator < Rails::Generators::Base
   include Rails::Generators::Migration
   
   desc "generates device model migration"
@@ -13,7 +13,7 @@ class DevicesAuth::InstallGenerator < Rails::Generators::Base
   end
   
   def create_initializer_file
-    template 'initializer.rb', 'config/initializers/devices_auth.rb'
+    template 'initializer.rb', 'config/initializers/client_auth.rb'
   end
   
   def generate_migration

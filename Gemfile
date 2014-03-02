@@ -2,5 +2,5 @@ source 'https://rubygems.org'
 
 ruby '2.0.0'
 
-# Specify your gem's dependencies in devices_auth.gemspec
+# Specify your gem's dependencies in client_auth.gemspec
 gemspec
