@@ -18,5 +18,6 @@ class ClientAuth::InstallGenerator < Rails::Generators::Base
   
   def generate_migration
     migration_template '../../../../db/migrate/create_devices.rb', 'db/migrate/create_devices'
+    migration_template '../../../../db/migrate/create_identities.rb', 'db/migrate/create_identities'
   end
 end
