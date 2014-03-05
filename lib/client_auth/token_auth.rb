@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../app/models/client_auth/device'
+require File.dirname(__FILE__) + '/../../app/models/client_auth/client'
 module ClientAuth
   class TokenAuth
     
@@ -22,7 +22,7 @@ module ClientAuth
     def login
       user = resource_class.find_by(resource_key => token)
 
-      device = ClientAuth::Device.find_or_create_for_key(device_id)
+      device = ClientAuth::Client.find_or_create_for_key(device_id)
       device.assign(user)
 
       device.token
@@ -46,7 +46,7 @@ module ClientAuth
     attr_reader :params
 
     def current_device
-      ClientAuth::Device.find_by(token: token)
+      ClientAuth::Client.find_by(token: token)
     end
 
     def token
