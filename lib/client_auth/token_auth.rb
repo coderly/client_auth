@@ -11,7 +11,7 @@ module ClientAuth
     def applicable?(action)
       case action
         when :login
-          params.include? :device_id
+          params.include? :client_id
         when :authenticate, :logout
           token.length == DEVISE_TOKEN_LENGTH
         else
@@ -22,7 +22,7 @@ module ClientAuth
     def login
       user = resource_class.find_by(resource_key => token)
 
-      device = ClientAuth::Client.find_or_create_for_key(device_id)
+      device = ClientAuth::Client.find_or_create_for_key(client_id)
       device.assign(user)
 
       device.token
@@ -53,8 +53,8 @@ module ClientAuth
       params[:token]
     end
 
-    def device_id
-      params[:device_id]
+    def client_id
+      params[:client_id]
     end
     
     def resource_class

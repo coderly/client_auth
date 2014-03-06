@@ -1,5 +1,6 @@
 require 'client_auth'
 require 'active_record'
+require 'database_cleaner'
 
 ENV["RAILS_ENV"] = "test"
 
@@ -22,9 +23,23 @@ RSpec.configure do |config|
   require 'rspec/expectations'
   config.include RSpec::Matchers
 
+  config.include Rack::Test::Methods
+
   # == Mock Framework
   config.mock_with :rspec
   
   include FactoryGirl::Syntax::Methods
+  
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+  end
+  
+  config.before :each do
+    DatabaseCleaner.start    
+  end
+  
+  config.after :each do
+    DatabaseCleaner.clean
+  end
   
 end

@@ -14,7 +14,7 @@ describe ClientAuth::TokenAuth do
   
   describe "when device doesnt exists" do
     
-    let(:device_token){ ClientAuth::TokenAuth.new({token: 'abcd', device_id: '123'}).login }
+    let(:device_token){ ClientAuth::TokenAuth.new({token: 'abcd', client_id: '123'}).login }
         
     let(:params){ { token: device_token } }
     
