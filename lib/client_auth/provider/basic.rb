@@ -11,7 +11,6 @@ module ClientAuth
         {
           name: 'basic',
           provider_user_id: credentials.email,
-          username: credentials.username,
           email: credentials.email,
           password_digest: hash_password(credentials.password)
         }

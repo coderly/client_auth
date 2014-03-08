@@ -9,6 +9,14 @@ module ClientAuth
 
       const_get(class_name).new
     end
+    
+    def self.lookup_identity_model(name)
+      class_name = "#{name}_identity".camelize
+      ClientAuth.const_get(class_name)
+    rescue NameError
+      ClientAuth::Identity
+    end
+    
 
   end
 end

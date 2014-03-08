@@ -27,16 +27,15 @@ module ClientAuth
       present :id, current_user.id
     end
 
-    desc 'Get the identities of the currently logged in user'
-    get 'identities' do
-      identities = ClientAuth::Identity.for_user(current_user).map do |o|
-        {type: o.provider}
-      end
-      present :identities, identities
-    end
-
     resource 'identities' do
-
+      
+      desc 'Get the identities of the currently logged in user'
+      get do
+        identities = ClientAuth::Identity.for_user(current_user)
+        present :identities, identities
+      end
+      
+      
       desc 'Connect an identity to the currently logged in user'
       params do
         requires :type, type: String, desc: 'The type of identity (basic, facebook, etc)'

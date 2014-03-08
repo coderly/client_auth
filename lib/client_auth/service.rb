@@ -91,7 +91,7 @@ module ClientAuth
     end
 
     def new_local_identity(identity_details)
-      identity = Identity.new
+      identity = Provider.lookup_identity_model(identity_details.name).new
       identity.provider = identity_details.name
       identity.provider_user_id = identity_details.provider_user_id
       identity.details = identity_details

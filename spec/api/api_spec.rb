@@ -23,7 +23,6 @@ module ClientAuth
             method: 'basic',
             client_id: 'IPHONE123',
             credentials: {
-                username: 'johnsmith',
                 email: 'doe@hotmail.com',
                 password: 'abcd'
             }
@@ -42,7 +41,6 @@ module ClientAuth
             method: 'basic',
             client_id: 'IPHONE123',
             credentials: {
-                username: 'johnsmith',
                 email: 'doe@hotmail.com',
                 password: 'abcd'
             }
@@ -52,7 +50,6 @@ module ClientAuth
             method: 'basic',
             client_id: 'IPHONE123',
             credentials: {
-                username: 'johnsmith',
                 email: 'doe@hotmail.com',
                 password: 'abcd'
             }
@@ -69,7 +66,6 @@ module ClientAuth
               method: 'basic',
               client_id: 'APPLE123',
               credentials: {
-                  username: 'bobjohnson',
                   email: 'joe@gmail.com',
                   password: '123'
               }
