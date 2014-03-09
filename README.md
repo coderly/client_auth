@@ -1,6 +1,6 @@
 # ClientAuth
 
-TODO: Write a gem description
+[![Build Status](https://travis-ci.org/coderly/client_auth.png?branch=master)](https://travis-ci.org/coderly/client_auth)
 
 ## Installation
 
