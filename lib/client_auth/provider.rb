@@ -1,3 +1,6 @@
+require File.dirname(__FILE__) + '/provider/anonymous'
+require File.dirname(__FILE__) + '/provider/basic'
+require 'client_auth/basic_identity'
 module ClientAuth
   module Provider
 
