@@ -36,6 +36,24 @@ module ClientAuth
         json.identities.map(&:type).should eq ['basic']
       end
 
+      it 'should work with other param in client_id params list' do
+        post 'register', {
+            method: 'basic',
+            device_id: 'IPHONE123',
+            credentials: {
+                email: 'doe@hotmail.com',
+                password: 'abcd'
+            }
+        }
+
+        authorize '', json.token
+        get 'user'
+        json.id.should_not be_nil
+
+        get 'identities'
+        json.identities.map(&:type).should eq ['basic']
+      end
+
       it 'should not allow re-registration' do
         post 'register', {
             method: 'basic',

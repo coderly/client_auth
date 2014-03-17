@@ -7,12 +7,13 @@ module ClientAuth
   mattr_accessor :devices_owner_model
   @@devices_owner_key = :token
   mattr_accessor :devices_owner_key
+  @@client_id_params = [:client_id, :device_id]
+  mattr_accessor :client_id_params
   
   class << self
     def setup
       yield self
     end
   end
-  
   
 end

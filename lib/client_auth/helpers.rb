@@ -20,6 +20,11 @@ module ClientAuth
     def authenticate!
       error!('401 Unauthorized', 401) unless authenticated?
     end
+    
+    def client_id
+      client_id_key = ClientAuth.client_id_params.find {|key| params[key].present? }
+      client_id_key.present? ? params[client_id_key] : nil
+    end
 
     private
 

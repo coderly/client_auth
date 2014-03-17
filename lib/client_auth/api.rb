@@ -54,15 +54,14 @@ module ClientAuth
     desc 'Log the current user into the system. This will create an account if one does not exist.'
     params do
       requires :method, type: String, desc: 'The authentication method'
-      requires :client_id, type: String, desc: 'A unique identifier of the device making the request'
       requires :credentials, type: Object, desc: 'The credentials for the auth provider'
     end
     post 'register' do
+      
       method, credentials = params[:method], params[:credentials]
 
       identity = auth_service.register(method, credentials)
-
-      device = ClientAuth::Client.find_or_create_for_key(params[:client_id])
+      device = ClientAuth::Client.find_or_create_for_key(client_id)
       device.assign(identity.user)
 
       present :token, device.token
@@ -72,7 +71,6 @@ module ClientAuth
     desc 'Log the user into the account. This call will fail if no registration was done before.'
     params do
       requires :method, type: String, desc: 'The authentication method'
-      requires :client_id, type: String, desc: 'A unique identifier of the device making the request'
       requires :credentials, type: Object, desc: 'The credentials for the auth provider'
     end
     post 'login' do
@@ -81,7 +79,7 @@ module ClientAuth
       identity = auth_service.login(method, credentials)
 
       if identity
-        device = ClientAuth::Client.find_or_create_for_key(params[:client_id])
+        device = ClientAuth::Client.find_or_create_for_key(client_id)
 
         device.assign(identity.user)
 
