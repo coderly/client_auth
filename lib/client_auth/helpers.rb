@@ -1,4 +1,5 @@
 require 'base64'
+require 'client_auth/policy_resolver'
 
 module ClientAuth
 
@@ -17,8 +18,19 @@ module ClientAuth
       device.try(:owner)
     end
 
-    def authenticate!
+    def authorized?(*args)
+      return true if args.length == 0
+
+      policy_name, *policy_args = *args
+      policy_class = PolicyResolver.resolve_class(policy_name)
+      policy = policy_class.new(current_user, *policy_args)
+
+      policy.get?
+    end
+
+    def authenticate!(*args)
       error!('401 Unauthorized', 401) unless authenticated?
+      error!('401 Permission Denied', 401) unless authorized?(*args)
     end
 
     private
