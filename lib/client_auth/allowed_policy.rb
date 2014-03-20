@@ -1,9 +1,9 @@
 require 'client_auth/policy'
 
 module ClientAuth
-  class EmptyPolicy < Policy
+  class AllowedPolicy < Policy
     def authorization
-      Authorization.new(true, false)
+      Authorization.new(true)
     end
   end
 end

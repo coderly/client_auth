@@ -81,7 +81,7 @@ module ClientAuth
 
     it 'should fail with the wrong password' do
       get 'test', {role: 'abcd'}
-      last_response.status.should == 401
+      last_response.status.should == 403
     end
 
     it 'should be successful with the right password' do
@@ -104,13 +104,13 @@ module ClientAuth
       last_response.status.should == 201
 
       post 'login', {username: 'john', password: '456'}
-      last_response.status.should == 401
+      last_response.status.should == 403
     end
 
     it 'should be possible to send custom error messages with policies' do
       get 'custom-error'
 
-      last_response.status.should == 401
+      last_response.status.should == 403
       last_response.body.should == "Access denied. You are too short."
     end
 

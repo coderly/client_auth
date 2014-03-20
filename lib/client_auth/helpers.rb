@@ -36,7 +36,7 @@ module ClientAuth
       error!('401 Unauthorized', 401) unless authenticated?
 
       auth = authorization(*args)
-      error!(auth.error_message, 401) if auth.denied?
+      error!(auth.error_message, 403) if auth.forbidden?
     end
 
     private

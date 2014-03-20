@@ -1,4 +1,4 @@
-require 'client_auth/empty_policy'
+require 'client_auth/allowed_policy'
 
 module ClientAuth
   class PolicyResolver
@@ -8,7 +8,7 @@ module ClientAuth
 
       prefix = name.to_s.camelize
       if prefix.empty?
-        EmptyPolicy
+        AllowedPolicy
       else
         const_get("#{prefix}Policy")
       end

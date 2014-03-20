@@ -2,18 +2,23 @@ module ClientAuth
   class Policy
 
     AccessDeniedError = Class.new(StandardError)
-    Authorization = Struct.new(:allowed?, :denied?, :error_message)
+    Authorization = Struct.new(:allowed?, :error_message) do
+      def forbidden?
+        !allowed?
+      end
+      alias_method :denied?, :forbidden?
+    end
 
-    DEFAULT_ERROR_MESSAGE = '401 Access Denied'
+    DEFAULT_ERROR_MESSAGE = '403 Forbidden'
 
     attr_accessor :current_user, :params, :request, :route
     attr_reader :error_message
 
     def authorization
       allowed = public_send("#{request_method}?")
-      Authorization.new(allowed, !allowed, DEFAULT_ERROR_MESSAGE)
+      Authorization.new(allowed, DEFAULT_ERROR_MESSAGE)
     rescue AccessDeniedError => e
-      Authorization.new(false, true, e.message)
+      Authorization.new(false, e.message)
     end
 
     def deny(message = DEFAULT_ERROR_MESSAGE)
