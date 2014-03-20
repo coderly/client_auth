@@ -18,9 +18,7 @@ module ClientAuth
       device.try(:owner)
     end
 
-    def authorized?(*args)
-      return true if args.length == 0
-
+    def authorization(*args)
       policy_name, *policy_args = *args
       policy_class = PolicyResolver.resolve_class(policy_name)
 
@@ -31,12 +29,14 @@ module ClientAuth
       policy.route = route
       policy.request = request
 
-      policy.authorized?
+      policy.authorization
     end
 
     def authenticate!(*args)
       error!('401 Unauthorized', 401) unless authenticated?
-      error!('401 Permission Denied', 401) unless authorized?(*args)
+
+      auth = authorization(*args)
+      error!(auth.error_message, 401) if auth.denied?
     end
 
     private

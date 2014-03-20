@@ -1,21 +1,18 @@
-class PolicyResolver
+require 'client_auth/empty_policy'
 
-  class EmptyPolicy
-    attr_accessor :current_user, :params, :route
+module ClientAuth
+  class PolicyResolver
 
-    def initialize(_) end
-    def get?; true end
-  end
+    def self.resolve_class(name)
+      return name if name.is_a? Class
 
-  def self.resolve_class(name)
-    return name if name.is_a? Class
-
-    prefix = name.to_s.camelize.capitalize
-    if prefix.empty?
-      EmptyPolicy
-    else
-      const_get("#{prefix}Policy")
+      prefix = name.to_s.camelize
+      if prefix.empty?
+        EmptyPolicy
+      else
+        const_get("#{prefix}Policy")
+      end
     end
-  end
 
+  end
 end

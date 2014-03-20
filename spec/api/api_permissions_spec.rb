@@ -29,6 +29,14 @@ class LoginPolicy < ClientAuth::Policy
   end
 end
 
+class CustomErrorPolicy < ClientAuth::Policy
+  def get?
+    deny "Access denied. You are too short."
+    deny "This message should not show up because you were already denied because of your height."
+    true
+  end
+end
+
 module ClientAuth
   describe 'permissions for an api' do
 
@@ -59,6 +67,10 @@ module ClientAuth
 
       post 'login' do
         authenticate! :login
+      end
+
+      get 'custom-error' do
+        authenticate! :custom_error
       end
 
     end
@@ -93,6 +105,13 @@ module ClientAuth
 
       post 'login', {username: 'john', password: '456'}
       last_response.status.should == 401
+    end
+
+    it 'should be possible to send custom error messages with policies' do
+      get 'custom-error'
+
+      last_response.status.should == 401
+      last_response.body.should == "Access denied. You are too short."
     end
 
   end
