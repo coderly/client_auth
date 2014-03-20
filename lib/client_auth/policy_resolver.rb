@@ -1,6 +1,8 @@
 class PolicyResolver
 
   class EmptyPolicy
+    attr_accessor :current_user, :params, :route
+
     def initialize(_) end
     def get?; true end
   end

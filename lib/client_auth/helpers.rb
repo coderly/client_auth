@@ -23,9 +23,15 @@ module ClientAuth
 
       policy_name, *policy_args = *args
       policy_class = PolicyResolver.resolve_class(policy_name)
-      policy = policy_class.new(current_user, *policy_args)
 
-      policy.get?
+      policy = policy_class.new(*policy_args)
+
+      policy.current_user = current_user
+      policy.params = params
+      policy.route = route
+      policy.request = request
+
+      policy.authorized?
     end
 
     def authenticate!(*args)
