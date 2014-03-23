@@ -54,23 +54,23 @@ module ClientAuth
         requires :role, type: String
       end
       get 'test' do
-        authenticate! :test, params[:role]
+        authorize! :test, params[:role]
       end
 
       get 'foo' do
-        authenticate! :test, params[:role]
+        authorize! :test, params[:role]
       end
 
       post 'other-policy' do
-        authenticate! :test, params[:role]
+        authorize! :test, params[:role]
       end
 
       post 'login' do
-        authenticate! :login
+        authorize! :login
       end
 
       get 'custom-error' do
-        authenticate! :custom_error
+        authorize! :custom_error
       end
 
     end

@@ -32,8 +32,12 @@ module ClientAuth
       policy.authorization
     end
 
-    def authenticate!(*args)
+    def authenticate!
       error!('401 Unauthorized', 401) unless authenticated?
+    end
+
+    def authorize!(*args)
+      authenticate!
 
       auth = authorization(*args)
       error!(auth.error_message, 403) if auth.forbidden?
