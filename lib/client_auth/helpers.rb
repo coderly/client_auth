@@ -9,13 +9,19 @@ module ClientAuth
     AUTHORIZATION_TYPE = /^\w+/
     AUTHORIZATION_CREDENTIALS = / .+$/
 
+    CURRENT_USER_KEY = 'auth.current_user'
+
     def authenticated?
       !!current_user
     end
 
     def current_user
-      device = Client.find_for_token(authorization_token)
-      device.try(:owner)
+      unless env.include? CURRENT_USER_KEY
+        device = Client.find_for_token(authorization_token)
+        env[CURRENT_USER_KEY] = device.try(:owner)
+      end
+
+      env[CURRENT_USER_KEY]
     end
 
     def authorization(*args)
