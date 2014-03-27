@@ -23,6 +23,7 @@ module ClientAuth
 
       verify_identity_credentials!(local_identity, credentials)
 
+      local_identity.user = nil if method == :anonymous
       raise Error::AlreadyRegistered, "Already registered for user #{local_identity.user.id}" if local_identity.has_user?
 
       local_identity.provider = identity_details.name
