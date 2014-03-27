@@ -161,8 +161,17 @@ module ClientAuth
           end
 
           it 'should not have created a duplicate device' do
+            last_response.status.should eq 201
+
+            # we still have one client
             ClientAuth::Client.count.should eq 1
-            User.count.should eq 1
+
+            # it should have created a 2nd anonymous user
+            User.count.should eq 2
+
+            # the client got assigned the new owner
+            client = ClientAuth::Client.first
+            client.owner.should eq User.order(:id).last
           end
 
         end
