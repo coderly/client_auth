@@ -53,16 +53,17 @@ module ClientAuth
       details[key.to_s]
     end
 
-    def set(key, value)
-      self.details[key] = value
+    def set(*args)
+      props = args.length == 2 ? {args[0] => args[1]} : args.first
+      props.each { |k, v| self.details[k] = v }
       save
     end
 
-    def update_details(details)
-      self.details = details
+    def unset(key)
+      self.details.delete(key.to_s)
       save
     end
-    
+
     def active?
       status == ACTIVE
     end

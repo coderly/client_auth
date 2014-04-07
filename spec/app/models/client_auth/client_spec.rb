@@ -36,6 +36,27 @@ module ClientAuth
         client.get(:a).should eq 'letter a'
         client.get(:b).should eq 'letter b'
       end
+
+      it 'should let you pass in a hash to set multiple values' do
+        client.set(a: '123', b: '456')
+        client.set(a: 'replaced')
+
+        client.get(:a).should eq 'replaced'
+        client.get(:b).should eq '456'
+      end
+
+      it 'should let you unset a value' do
+        client.set(x: 'xx', y: 'yy')
+        client.unset(:x)
+
+        client.get(:x).should be_nil
+        client.get(:y).should eq 'yy'
+      end
+
+      it 'should allow setting complex data' do
+        client.set(:o, {x: 3})
+        client.get(:o).should eq({'x' => 3})
+      end
     end
 
   end
