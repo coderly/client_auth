@@ -48,21 +48,22 @@ module ClientAuth
       self.status = ACTIVE
       save
     end
-    
-    def register_push_token(push_token)
-      self.push_token = push_token
+
+    def get(key)
+      details[key.to_s]
+    end
+
+    def set(*args)
+      props = args.length == 2 ? {args[0] => args[1]} : args.first
+      props.each { |k, v| self.details[k] = v }
       save
     end
-    
-    def registered_push_token?
-      self.push_token.present?
-    end
-    
-    def update_details(details)
-      self.details = details
+
+    def unset(key)
+      self.details.delete(key.to_s)
       save
     end
-    
+
     def active?
       status == ACTIVE
     end
