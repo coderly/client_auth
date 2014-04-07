@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 module ClientAuth
   describe Identity do
     describe 'callback to user' do

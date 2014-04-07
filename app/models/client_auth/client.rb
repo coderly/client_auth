@@ -48,16 +48,16 @@ module ClientAuth
       self.status = ACTIVE
       save
     end
-    
-    def register_push_token(push_token)
-      self.push_token = push_token
+
+    def get(key)
+      details[key.to_s]
+    end
+
+    def set(key, value)
+      self.details[key] = value
       save
     end
-    
-    def registered_push_token?
-      self.push_token.present?
-    end
-    
+
     def update_details(details)
       self.details = details
       save
