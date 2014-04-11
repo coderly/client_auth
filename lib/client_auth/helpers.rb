@@ -15,10 +15,13 @@ module ClientAuth
       !!current_user
     end
 
+    def current_client
+      Client.find_for_token(authorization_token)
+    end
+
     def current_user
       unless env.include? CURRENT_USER_KEY
-        device = Client.find_for_token(authorization_token)
-        env[CURRENT_USER_KEY] = device.try(:owner)
+        env[CURRENT_USER_KEY] = current_client.try(:owner)
       end
 
       env[CURRENT_USER_KEY]
