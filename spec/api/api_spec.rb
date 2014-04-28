@@ -7,11 +7,11 @@ require 'spec_helper'
 
 module ClientAuth
   describe API do
-    
+
     def app
       API
     end
-    
+
     def json
       Hashie::Mash.new JSON.parse(last_response.body)
     end
@@ -118,6 +118,34 @@ module ClientAuth
           }
 
           json.token.should be_nil
+        end
+
+        it "should allow you to update your email and password" do
+          authorize '', @token
+          put 'identities/basic', {
+            credentials: {
+              email: 'john@doe.com',
+              password: 'newpassword'
+            }
+          }
+
+          get 'identities'
+          json.identities.map(&:type).should eq ['basic']
+          json.identities[0].email.should eq "john@doe.com"
+
+          post 'login', {
+              method: 'basic',
+              client_id: 'LOGIN',
+              credentials: {
+                  email: 'john@doe.com',
+                  password: 'newpassword'
+              }
+          }
+
+          authorize '', json.token
+          get 'user'
+          json.id.should_not be_nil
+
         end
 
       end
