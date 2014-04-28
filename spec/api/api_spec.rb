@@ -130,7 +130,6 @@ module ClientAuth
           }
 
           get 'identities'
-          json.identities.map(&:type).should eq ['basic']
           json.identities[0].email.should eq "john@doe.com"
 
           post 'login', {
@@ -146,6 +145,18 @@ module ClientAuth
           get 'user'
           json.id.should_not be_nil
 
+          # Old credentials should fail
+          post 'login', {
+              method: 'basic',
+              client_id: 'LOGIN',
+              credentials: {
+                  email: 'joe@gmail.com',
+                  password: '123'
+              }
+          }
+          authorize '', json.token
+          get 'user'
+          json.id.should be_nil
         end
 
       end
