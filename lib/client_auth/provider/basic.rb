@@ -27,6 +27,19 @@ module ClientAuth
         verify_password(identity_details.password_digest, credentials.password)
       end
 
+      def create_or_update_identity_with_credentials(credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity = Identity.where(provider: 'basic', provider_user_id: credentials.email).first
+        identity = Provider.lookup_identity_model('basic').new if identity.nil?
+
+        raise Error::AlreadyRegistered, "Already registered for user #{identity.user.id}" if identity.has_user?
+
+        identity.details = fetch(credentials)
+        identity.provider = 'basic'
+        identity.provider_user_id = credentials.email
+        identity
+      end
+
       private
 
       def hash_password(plain_text_password)

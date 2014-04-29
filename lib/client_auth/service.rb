@@ -13,28 +13,14 @@ require 'client_auth/error/already_registered'
 module ClientAuth
   class Service
 
-    def register(method, credentials)
-      method = method.to_sym
-      credentials = Hashie::Mash.new(credentials)
+    def register(type, credentials)
+      identity_provider = Provider.lookup(type)
+      identity = identity_provider.create_or_update_identity_with_credentials(credentials)
 
-      identity_details = fetch_identity_details(method, credentials)
-
-      local_identity = find_or_new_local_identity!(method, identity_details)
-
-      verify_identity_credentials!(local_identity, credentials)
-
-      local_identity.user = nil if method == :anonymous
-      raise Error::AlreadyRegistered, "Already registered for user #{local_identity.user.id}" if local_identity.has_user?
-
-      local_identity.provider = identity_details.name
-      local_identity.provider_user_id = identity_details.provider_user_id
-      local_identity.details = identity_details
-
-      user = create_user
-      associate_identity_with_user(local_identity, user)
-      local_identity.save
-
-      local_identity
+      verify_identity_credentials!(identity, credentials)
+      associate_identity_with_user(identity, create_user)
+      identity.save
+      identity
     end
 
     def connect(user, method, credentials)
