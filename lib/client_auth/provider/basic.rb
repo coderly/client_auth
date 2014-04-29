@@ -8,12 +8,19 @@ module ClientAuth
       attr_reader :details
 
       def fetch(credentials)
-        {
+        return_hash = {
           name: 'basic',
           provider_user_id: credentials.email,
           email: credentials.email,
-          password_digest: hash_password(credentials.password)
         }
+        # Update the password if the caller is passing a new one.
+        if credentials.has_key?('password')
+          return_hash[:password_digest] = hash_password(credentials.password)
+        # Otherwise use the existing password.
+        elsif credentials.has_key?('password_digest')
+          return_hash[:password_digest] = credentials.password_digest
+        end
+        return_hash
       end
 
       def verify(identity_details, credentials)

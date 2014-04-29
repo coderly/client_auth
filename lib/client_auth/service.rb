@@ -76,7 +76,8 @@ module ClientAuth
     def update_credentials(user, type, new_credentials)
       identity = Identity.for_user_of_type(user, type)
       raise Error::LocalIdentityMissing, "Local #{method} identity missing" if identity.nil?
-      identity.details = fetch_identity_details(type, new_credentials)
+      new_credentials = identity.details.merge new_credentials
+      identity.details = fetch_identity_details(type, Hashie::Mash.new(new_credentials))
       identity.provider_user_id = identity.details.provider_user_id
       identity.save
     end

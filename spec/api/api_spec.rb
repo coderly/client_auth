@@ -159,6 +159,31 @@ module ClientAuth
           json.id.should be_nil
         end
 
+        it "should allow you to update only your email" do
+          authorize '', @token
+          put 'identities/basic', {
+            credentials: {
+              email: 'john@doe.com'
+            }
+          }
+
+          get 'identities'
+          json.identities[0].email.should eq "john@doe.com"
+
+          post 'login', {
+              method: 'basic',
+              client_id: 'LOGIN',
+              credentials: {
+                  email: 'john@doe.com',
+                  password: '123'
+              }
+          }
+
+          authorize '', json.token
+          get 'user'
+          json.id.should_not be_nil
+        end
+
       end
 
       context 'when registering as an anonymous user' do
