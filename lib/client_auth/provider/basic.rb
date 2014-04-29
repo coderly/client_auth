@@ -24,6 +24,8 @@ module ClientAuth
       end
 
       def verify(identity_details, credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity_details = Hashie::Mash.new(identity_details)
         verify_password(identity_details.password_digest, credentials.password)
       end
 
@@ -37,6 +39,17 @@ module ClientAuth
         identity.details = fetch(credentials)
         identity.provider = 'basic'
         identity.provider_user_id = credentials.email
+        identity
+      end
+
+      def get_identity_with_credentials(credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity = Identity.where(provider: 'basic', provider_user_id: credentials.email).first
+        raise Error::LocalIdentityMissing, "User missing basic identity" if identity.nil?
+
+        valid = verify(identity.details, credentials)
+        raise Error::InvalidCredentials, "Invalid credentials for basic identity" unless valid
+
         identity
       end
 

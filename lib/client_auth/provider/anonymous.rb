@@ -16,6 +16,8 @@ module ClientAuth
       end
 
       def verify(identity_details, credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity_details = Hashie::Mash.new(identity_details)
         identity_details.client_id == credentials.client_id
       end
 
@@ -28,6 +30,17 @@ module ClientAuth
         identity.user = nil
         identity.provider = 'anonymous'
         identity.provider_user_id = credentials.client_id
+        identity
+      end
+
+      def get_identity_with_credentials(credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity = Identity.where(provider: 'anonymous', provider_user_id: credentials.client_id).first
+        raise Error::LocalIdentityMissing, "User missing anonymous identity" if identity.nil?
+
+        valid = verify(identity.details, credentials)
+        raise Error::InvalidCredentials, "Invalid credentials for anonymous identity" unless valid
+
         identity
       end
 
