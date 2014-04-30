@@ -330,10 +330,23 @@ module ClientAuth
       post 'identities/basic/connect', {
           credentials: {
               email: 'jack@okkk.com',
-              password: '123'
+              password: '234'
           }
       }
+
       last_response.status.should be >= 400
+      json.status.should eq 'error'
+      json.message.should eq 'Already registered jack@okkk.com'
+
+      # second user is still anonymous (/connect failed)
+      get 'identities'
+      json.identities.map(&:type).should eq ['anonymous']
+
+
+      # first user still has his identities
+      authorize '', first_token
+      get 'identities'
+      json.identities.map(&:type).should eq ['basic']
     end
 
 

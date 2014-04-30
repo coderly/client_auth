@@ -34,7 +34,7 @@ module ClientAuth
         identity = Identity.where(provider: 'basic', provider_user_id: credentials.email).first
         identity = Provider.lookup_identity_model('basic').new if identity.nil?
 
-        raise Error::AlreadyRegistered, "Already registered for user #{identity.user.id}" if identity.has_user?
+        raise Error::AlreadyRegistered, "Already registered #{identity.provider_user_id}" if identity.has_user?
 
         identity.details = fetch(credentials)
         identity.provider = 'basic'
