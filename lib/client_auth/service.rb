@@ -13,64 +13,42 @@ require 'client_auth/error/already_registered'
 module ClientAuth
   class Service
 
-    def register(method, credentials)
-      method = method.to_sym
-      credentials = Hashie::Mash.new(credentials)
+    def register(type, credentials)
+      identity_provider = Provider.lookup(type)
+      identity = identity_provider.create_or_update_identity_with_credentials(credentials)
 
-      identity_details = fetch_identity_details(method, credentials)
-
-      local_identity = find_or_new_local_identity!(method, identity_details)
-
-      verify_identity_credentials!(local_identity, credentials)
-
-      local_identity.user = nil if method == :anonymous
-      raise Error::AlreadyRegistered, "Already registered for user #{local_identity.user.id}" if local_identity.has_user?
-
-      local_identity.provider = identity_details.name
-      local_identity.provider_user_id = identity_details.provider_user_id
-      local_identity.details = identity_details
-
-      user = create_user
-      associate_identity_with_user(local_identity, user)
-      local_identity.save
-
-      local_identity
+      associate_identity_with_user(identity, create_user)
+      identity.save
+      identity
     end
 
-    def connect(user, method, credentials)
-      method = method.to_sym
-      credentials = Hashie::Mash.new(credentials)
+    def connect(user, type, credentials)
+      identity_provider = Provider.lookup(type)
+      identity = identity_provider.create_or_update_identity_with_credentials(credentials)
 
-      identity_details = fetch_identity_details(method, credentials)
+      associate_identity_with_user(identity, user)
 
-      local_identity = find_or_new_local_identity!(method, identity_details)
-
-      verify_identity_credentials!(local_identity, credentials)
-
-      local_identity.provider = identity_details.name
-      local_identity.provider_user_id = identity_details.provider_user_id
-      local_identity.details = identity_details
-
-      user = user
-      associate_identity_with_user(local_identity, user)
-      local_identity.save
-
-      local_identity
+      identity.save
+      identity
     end
 
-    def login(method, credentials)
-      method = method.to_sym
-      credentials = Hashie::Mash.new(credentials)
-      identity_details = fetch_identity_details(method, credentials)
+    def login(type, credentials)
+      provider = Provider.lookup(type)
+      provider.get_identity_with_credentials(credentials)
+    end
 
-      local_identity = find_local_identity(method, identity_details)
-      raise Error::LocalIdentityMissing, "Local #{method} identity missing" if local_identity.nil?
+    def update_credentials(user, type, credentials)
+      identity = Identity.for_user_of_type(user, type)
+      raise Error::LocalIdentityMissing, "Local #{type} identity missing" if identity.nil?
+      credentials = identity.details.merge credentials
 
-      verify_identity_credentials!(local_identity, credentials)
+      provider = Provider.lookup(type)
+      identity_details = provider.fetch(Hashie::Mash.new(credentials))
+      identity_details = Hashie::Mash.new(identity_details)
+      identity.details = identity_details
 
-      raise "Missing user for #{method} identity" unless local_identity.has_user?
-
-      local_identity
+      identity.provider_user_id = identity_details.provider_user_id
+      identity.save
     end
 
     private
@@ -97,12 +75,6 @@ module ClientAuth
       identity.provider_user_id = identity_details.provider_user_id
       identity.details = identity_details
       identity
-    end
-
-    def fetch_identity_details(method, credentials)
-      provider = Provider.lookup(method)
-      identity_details = provider.fetch(credentials)
-      Hashie::Mash.new(identity_details)
     end
 
     def find_or_new_local_identity(method, identity_details)

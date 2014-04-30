@@ -28,14 +28,13 @@ module ClientAuth
     end
 
     resource 'identities' do
-      
+
       desc 'Get the identities of the currently logged in user'
       get do
         identities = ClientAuth::Identity.for_user(current_user)
         present :identities, identities
       end
-      
-      
+
       desc 'Connect an identity to the currently logged in user'
       params do
         requires :type, type: String, desc: 'The type of identity (basic, facebook, etc)'
@@ -49,6 +48,17 @@ module ClientAuth
         present :success, true
       end
 
+      desc 'Update an identity'
+      params do
+        requires :type, type: String, desc: 'The type of identity (basic, facebook, etc)'
+        requires :credentials, type: Object, desc: 'The credentials for the auth provider to update'
+      end
+      put ':type' do
+        authenticate!
+        auth_service.update_credentials(current_user, params[:type], params[:credentials])
+        present :success, true
+      end
+
     end
 
     desc 'Log the current user into the system. This will create an account if one does not exist.'
@@ -57,7 +67,7 @@ module ClientAuth
       requires :credentials, type: Object, desc: 'The credentials for the auth provider'
     end
     post 'register' do
-      
+
       method, credentials = params[:method], params[:credentials]
 
       identity = auth_service.register(method, credentials)
@@ -89,6 +99,7 @@ module ClientAuth
         present :success, false
       end
     end
+
 
   end
 end
