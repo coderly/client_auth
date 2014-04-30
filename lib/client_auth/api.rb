@@ -10,7 +10,10 @@ module ClientAuth
   class API < Grape::API
     format :json
 
-    rescue_from Error::InvalidCredentials, Error::LocalIdentityMissing, Error::AlreadyRegistered
+    rescue_from(Error::InvalidCredentials, Error::LocalIdentityMissing, Error::AlreadyRegistered) do |e|
+      json = {status: 'error', message: e.message}.to_json
+      Rack::Response.new(json, 400)
+    end
 
     helpers ClientAuth::Helpers
 

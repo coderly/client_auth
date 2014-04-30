@@ -267,5 +267,88 @@ module ClientAuth
 
     end
 
+    it 'should prevent a second user from registering an existing identity on the same device' do
+      post 'register', {
+          method: 'anonymous',
+          client_id: 'PEAR1234',
+          credentials: {client_id: 'PEAR1234'}
+      }
+      first_token = json.token
+
+      authorize '', first_token
+      post 'identities/basic/connect', {
+          credentials: {
+              email: 'jack@okkk.com',
+              password: '234'
+          }
+      }
+
+      authorize '', ''
+      post 'register', {
+          method: 'anonymous',
+          client_id: 'PEAR1234',
+          credentials: {client_id: 'PEAR1234'}
+      }
+      second_token = json.token
+
+      authorize '', second_token
+      post 'identities/basic/connect', {
+          credentials: {
+              email: 'jack@okkk.com',
+              password: '234'
+          }
+      }
+      last_response.status.should be >= 400
+    end
+
+
+    it 'should prevent a second user from registering an existing identity on a different device' do
+      post 'register', {
+          method: 'anonymous',
+          client_id: 'PEAR1234',
+          credentials: {client_id: 'PEAR1234'}
+      }
+      first_token = json.token
+
+      authorize '', first_token
+      post 'identities/basic/connect', {
+          credentials: {
+              email: 'jack@okkk.com',
+              password: '234'
+          }
+      }
+
+      authorize '', ''
+      post 'register', {
+          method: 'anonymous',
+          client_id: 'DIFFERENT-DEVICE-123',
+          credentials: {client_id: 'DIFFERENT-DEVICE-123'}
+      }
+      second_token = json.token
+
+      authorize '', second_token
+      post 'identities/basic/connect', {
+          credentials: {
+              email: 'jack@okkk.com',
+              password: '234'
+          }
+      }
+
+      last_response.status.should be >= 400
+      json.status.should eq 'error'
+      json.message.should eq 'Already registered jack@okkk.com'
+
+      # second user is still anonymous (/connect failed)
+      get 'identities'
+      json.identities.map(&:type).should eq ['anonymous']
+
+
+      # first user still has his identities
+      authorize '', first_token
+      get 'identities'
+      json.identities.map(&:type).should eq ['basic']
+    end
+
+
   end
 end
