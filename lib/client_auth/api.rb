@@ -58,7 +58,7 @@ module ClientAuth
       end
       put ':type' do
         authenticate!
-        auth_service.update_credentials(current_user, params[:type], params[:credentials])
+        auth_service.update(current_user, params[:type], params[:credentials])
         present :success, true
       end
 

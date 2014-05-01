@@ -37,17 +37,13 @@ module ClientAuth
       provider.get_identity_with_credentials(credentials)
     end
 
-    def update_credentials(user, type, credentials)
+    def update(user, type, new_details)
       identity = Identity.for_user_of_type(user, type)
-      raise Error::LocalIdentityMissing, "Local #{type} identity missing" if identity.nil?
-      credentials = identity.details.merge credentials
+      raise Error::LocalIdentityMissing, "#{type} identity missing" if identity.nil?
 
       provider = Provider.lookup(type)
-      identity_details = provider.fetch(Hashie::Mash.new(credentials))
-      identity_details = Hashie::Mash.new(identity_details)
-      identity.details = identity_details
+      provider.update_identity_details(identity, new_details)
 
-      identity.provider_user_id = identity_details.provider_user_id
       identity.save
     end
 

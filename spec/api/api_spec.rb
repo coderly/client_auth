@@ -159,6 +159,30 @@ module ClientAuth
           json.id.should be_nil
         end
 
+
+        it "should not allow you to 'steal' someones identity by changing your credentials" do
+          post 'register', {
+              method: 'basic',
+              client_id: 'QWERTY',
+              credentials: {
+                  email: 'querty@hotmail.com',
+                  password: '1234'
+              }
+          }
+          dudes_token = json.token
+
+          authorize '', dudes_token
+          put 'identities/basic', {
+              credentials: {
+                  email: 'joe@gmail.com',
+                  password: 'newpassword'
+              }
+          }
+
+          last_response.status.should be >= 400
+        end
+
+
         it "should allow you to update only your email" do
           authorize '', @token
           put 'identities/basic', {
