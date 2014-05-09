@@ -41,6 +41,10 @@ module ClientAuth
       policy.authorization
     end
 
+    def authenticate
+      current_user
+    end
+
     def authenticate!
       error!('401 Unauthorized', 401) unless authenticated?
     end
