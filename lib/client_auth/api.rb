@@ -102,6 +102,11 @@ module ClientAuth
         present :success, false
       end
     end
+    
+    post 'recover_credentials' do
+      
+      
+    end
 
 
   end

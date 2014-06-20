@@ -32,5 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency("activesupport", "~> 4.1.1")
   spec.add_dependency("grape")
   spec.add_dependency("bcrypt")  
+  spec.add_dependency('actionmailer', '~> 4.1.1')  
   
 end
