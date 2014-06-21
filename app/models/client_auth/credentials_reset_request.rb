@@ -10,15 +10,13 @@ module ClientAuth
     belongs_to :identity, class_name: "ClientAuth::Identity"
     
     before_save :ensure_token
+    
+    def self.generate_token
+      SecureRandom.urlsafe_base64(15).tr('lIO0', 'sxyz')
+    end
 
     def ensure_token
-      self.token = generate_token if token.blank?
-    end
-    
-    private
-    
-    def generate_token
-      SecureRandom.urlsafe_base64(15).tr('lIO0', 'sxyz')
+      self.token = self.class.generate_token if token.blank?
     end
     
   end

@@ -39,7 +39,7 @@ module ClientAuth
       it 'should generate a reset credentials request' do
         Timecop.freeze(2014, 06, 20)
         expect{
-          post 'recover_credentials', {
+          post 'request-password-reset', {
               type: 'basic',
               credentials: {
                   email: 'neymar@test.com'
@@ -57,35 +57,37 @@ module ClientAuth
       it 'should call send_forgot_password_email block' do
         fake_mailer = double
         allow(fake_mailer).to receive(:forgot_password)
+        ClientAuth.send_forgot_password_email = lambda { |token, user| fake_mailer.forgot_password(user, token) }
+        get 'user'
+        user = User.find(json.id)
+        CredentialsResetRequest.stub(:generate_token) { 'ABC123'}
         
-        ClientAuth.send_forgot_password_email = lambda { |user, token| fake_mailer.forgot_password(user, token) }
-        
-        expect(fake_mailer).to receive(:forgot_password).once
-        post 'recover_credentials', { type: 'basic',  credentials: { email: 'neymar@test.com'} }
+        expect(fake_mailer).to receive(:forgot_password).with(user, 'ABC123')
+        post 'request-password-reset', { type: 'basic',  credentials: { email: 'neymar@test.com'} }
       end
       
       it "should change a credential with correct token" do
-        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
         request = CredentialsResetRequest.last
-        post 'reset_credentials', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+        post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
         post 'login', { method: 'basic', client_id: 'OTHER', credentials: { email: 'neymar@test.com', password: '456' } }
         expect(json.success).to eq true
       end
       
       it "should raise an error if token's wrong" do
-        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
         expect { 
-          post 'reset_credentials', { token: 'abcd', credentials: { email: 'neymar@test.com', password: '456' } }
+          post 'reset-password', { token: 'abcd', credentials: { email: 'neymar@test.com', password: '456' } }
         }.to raise_error(Error::InvalidRecoverToken)
       end
       
       it "should raise an exception if token's expired" do
         Timecop.freeze(2014, 06, 20)
-        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
         request = CredentialsResetRequest.last
         Timecop.freeze(2014, 06, 20, 11)
         expect { 
-          post 'reset_credentials', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+          post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
         }.to raise_error(Error::InvalidRecoverToken)
         Timecop.return
       end
