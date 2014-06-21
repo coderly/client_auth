@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../../app/models/client_auth/client'
 require File.dirname(__FILE__) + '/../../app/models/client_auth/identity'
+require File.dirname(__FILE__) + '/../../app/models/client_auth/credentials_reset_request'
 
 require 'client_auth/provider'
 require 'client_auth/provider/anonymous'
@@ -54,6 +55,14 @@ module ClientAuth
     def recover_credentials(type, credentials)
       provider = Provider.lookup(type)
       provider.recover_credentials(credentials)
+    end
+    
+    def reset_credentials(token, credentials)
+      request = CredentialsResetRequest.find_by token: token
+      raise Error::InvalidRecoverToken, "Unknown token" if request.nil?
+      raise Error::InvalidRecoverToken, "Expired token" if request.expires_at < Time.now
+      identity = request.identity
+      update_credentials(identity.user, identity.provider, credentials)
     end
 
     private

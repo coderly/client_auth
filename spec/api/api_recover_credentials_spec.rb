@@ -5,6 +5,7 @@ require 'hashie/mash'
 require 'pry'
 require 'spec_helper'
 require 'timecop'
+require 'client_auth/error/invalid_recover_token'
 
 module ClientAuth
   
@@ -61,6 +62,32 @@ module ClientAuth
         
         expect(fake_mailer).to receive(:forgot_password).once
         post 'recover_credentials', { type: 'basic',  credentials: { email: 'neymar@test.com'} }
+      end
+      
+      it "should change a credential with correct token" do
+        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        request = CredentialsResetRequest.last
+        post 'reset_credentials', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+        post 'login', { method: 'basic', client_id: 'OTHER', credentials: { email: 'neymar@test.com', password: '456' } }
+        expect(json.success).to eq true
+      end
+      
+      it "should raise an error if token's wrong" do
+        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        expect { 
+          post 'reset_credentials', { token: 'abcd', credentials: { email: 'neymar@test.com', password: '456' } }
+        }.to raise_error(Error::InvalidRecoverToken)
+      end
+      
+      it "should raise an exception if token's expired" do
+        Timecop.freeze(2014, 06, 20)
+        post 'recover_credentials', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        request = CredentialsResetRequest.last
+        Timecop.freeze(2014, 06, 20, 11)
+        expect { 
+          post 'reset_credentials', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+        }.to raise_error(Error::InvalidRecoverToken)
+        Timecop.return
       end
     
     end

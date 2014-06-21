@@ -111,6 +111,15 @@ module ClientAuth
       auth_service.recover_credentials(params[:type], params[:credentials])
       present :success, true
     end
+    
+    params do
+      requires :token, type: String, desc: 'The token to got from recover crdentials'
+      requires :credentials, type: Object, desc: 'The credentials for the auth provider'
+    end
+    post 'reset_credentials' do
+      auth_service.reset_credentials(params[:token], params[:credentials])
+      present :success, true
+    end
 
 
   end
