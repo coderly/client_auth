@@ -23,9 +23,19 @@ ActiveRecord::Schema.define(version: 20140212210648) do
   add_index "client_auth_identities", ["provider", "provider_user_id"], name: "index_client_auth_identities_on_provider_and_provider_user_id", unique: true, using: :btree
   add_index "client_auth_identities", ["user_id", "user_type", "provider"], name: "client_auth_user_provider", unique: true, using: :btree
   
+  create_table 'client_auth_password_reset_request' do |t|
+    t.string 'token'
+    t.datetime 'expires_at'
+    t.references 'identity'
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index 'client_auth_password_reset_request', 'token', unique: true
   
   create_table "users", force: true do |t|
     t.string 'name'
+    t.string 'email'
     t.string 'token'
   end
 end

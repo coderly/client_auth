@@ -43,17 +43,27 @@ module ClientAuth
       end
 
       def get_identity_with_credentials(credentials)
-        credentials = Hashie::Mash.new(credentials)
-        identity = Identity.where(provider: 'basic', provider_user_id: credentials.email).first
-        raise Error::LocalIdentityMissing, "User missing basic identity" if identity.nil?
-
+        identity = identity_from_credentials(credentials)
         valid = verify(identity.details, credentials)
         raise Error::InvalidCredentials, "Invalid credentials for basic identity" unless valid
 
         identity
       end
+      
+      def request_password_reset(credentials)
+        identity = identity_from_credentials(credentials)
+        request = PasswordResetRequest.create(identity: identity, expires_at: Time.now + 36000)
+        ClientAuth.send_forgot_password_email.call(request.token, identity.user)
+      end
 
       private
+      
+      def identity_from_credentials(credentials)
+        credentials = Hashie::Mash.new(credentials)
+        identity = Identity.find_by(provider: 'basic', provider_user_id: credentials.email)
+        raise Error::LocalIdentityMissing, "User missing basic identity" if identity.nil?
+        identity
+      end
 
       def hash_password(plain_text_password)
         BCrypt::Password.create(plain_text_password)

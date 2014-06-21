@@ -102,6 +102,24 @@ module ClientAuth
         present :success, false
       end
     end
+    
+    params do
+      requires :type, type: String, desc: 'The type of identity (basic, facebook, etc)'
+      requires :credentials, type: Object, desc: 'The credentials for the auth provider'
+    end
+    post 'request-password-reset' do
+      auth_service.request_password_reset(params[:type], params[:credentials])
+      present :success, true
+    end
+    
+    params do
+      requires :token, type: String, desc: 'The token to got from recover crdentials'
+      requires :credentials, type: Object, desc: 'The credentials for the auth provider'
+    end
+    post 'reset-password' do
+      auth_service.reset_password(params[:token], params[:credentials])
+      present :success, true
+    end
 
 
   end

@@ -16,6 +16,7 @@ RSpec.configure do |config|
   load File.dirname(__FILE__) + '/support/schema.rb'
   
   Dir["#{File.dirname(__FILE__)}/support/models/*.rb"].each {|f| require f}
+  Dir["#{File.dirname(__FILE__)}/../app/models/client_auth/*.rb"].each {|f| require f}
   
   Dir["#{File.dirname(__FILE__)}/factories/*.rb"].each {|f| require f}
   
@@ -40,6 +41,10 @@ RSpec.configure do |config|
   
   config.after :each do
     DatabaseCleaner.clean
+  end
+    
+  def json
+    Hashie::Mash.new JSON.parse(last_response.body)
   end
   
 end

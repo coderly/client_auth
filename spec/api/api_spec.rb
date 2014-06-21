@@ -12,10 +12,6 @@ module ClientAuth
       API
     end
 
-    def json
-      Hashie::Mash.new JSON.parse(last_response.body)
-    end
-
     describe 'POST register' do
 
       it 'should create a user account when registering' do
