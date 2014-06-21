@@ -52,12 +52,12 @@ module ClientAuth
       identity.save
     end
     
-    def recover_credentials(type, credentials)
+    def request_password_reset(type, credentials)
       provider = Provider.lookup(type)
-      provider.recover_credentials(credentials)
+      provider.request_password_reset(credentials)
     end
     
-    def reset_credentials(token, credentials)
+    def reset_password(token, credentials)
       request = CredentialsResetRequest.find_by token: token
       raise Error::InvalidRecoverToken, "Unknown token" if request.nil?
       raise Error::InvalidRecoverToken, "Expired token" if request.expires_at < Time.now

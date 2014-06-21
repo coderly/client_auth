@@ -108,7 +108,7 @@ module ClientAuth
       requires :credentials, type: Object, desc: 'The credentials for the auth provider'
     end
     post 'request-password-reset' do
-      auth_service.recover_credentials(params[:type], params[:credentials])
+      auth_service.request_password_reset(params[:type], params[:credentials])
       present :success, true
     end
     
@@ -117,7 +117,7 @@ module ClientAuth
       requires :credentials, type: Object, desc: 'The credentials for the auth provider'
     end
     post 'reset-password' do
-      auth_service.reset_credentials(params[:token], params[:credentials])
+      auth_service.reset_password(params[:token], params[:credentials])
       present :success, true
     end
 

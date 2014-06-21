@@ -50,7 +50,7 @@ module ClientAuth
         identity
       end
       
-      def recover_credentials(credentials)
+      def request_password_reset(credentials)
         identity = identity_from_credentials(credentials)
         request = CredentialsResetRequest.create(identity: identity, expires_at: Time.now + 36000)
         ClientAuth.send_forgot_password_email.call(request.token, identity.user)
