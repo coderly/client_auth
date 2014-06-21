@@ -3,9 +3,9 @@ require 'securerandom'
 require_relative 'identity'
 
 module ClientAuth
-  class CredentialsResetRequest < ActiveRecord::Base
+  class PasswordResetRequest < ActiveRecord::Base
     
-    self.table_name = 'client_auth_credentials_reset_request'
+    self.table_name = 'client_auth_password_reset_request'
     
     belongs_to :identity, class_name: "ClientAuth::Identity"
     

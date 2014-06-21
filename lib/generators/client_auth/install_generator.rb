@@ -19,6 +19,6 @@ class ClientAuth::InstallGenerator < Rails::Generators::Base
   def generate_migration
     migration_template '../../../../db/migrate/create_client_auth_clients.rb', 'db/migrate/create_client_auth_clients'
     migration_template '../../../../db/migrate/create_client_auth_identities.rb', 'db/migrate/create_client_auth_identities'
-    migration_template '../../../../db/migrate/client_auth_credentials_reset_request.rb', 'db/migrate/client_auth_credentials_reset_request'
+    migration_template '../../../../db/migrate/client_auth_password_reset_request.rb', 'db/migrate/client_auth_password_reset_request'
   end
 end

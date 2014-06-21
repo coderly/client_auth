@@ -45,9 +45,9 @@ module ClientAuth
                   email: 'neymar@test.com'
                }
           }
-        }.to change{CredentialsResetRequest.count}.by(1)
+        }.to change{PasswordResetRequest.count}.by(1)
         
-        request = CredentialsResetRequest.last
+        request = PasswordResetRequest.last
         expect(request.token).not_to be_blank
         expect(request.expires_at).to eq Time.new(2014, 06, 20, 10)
         expect(request.identity.details['email']).to eq 'neymar@test.com'
@@ -60,7 +60,7 @@ module ClientAuth
         ClientAuth.send_forgot_password_email = lambda { |token, user| fake_mailer.forgot_password(user, token) }
         get 'user'
         user = User.find(json.id)
-        CredentialsResetRequest.stub(:generate_token) { 'ABC123'}
+        PasswordResetRequest.stub(:generate_token) { 'ABC123'}
         
         expect(fake_mailer).to receive(:forgot_password).with(user, 'ABC123')
         post 'request-password-reset', { type: 'basic',  credentials: { email: 'neymar@test.com'} }
@@ -68,7 +68,7 @@ module ClientAuth
       
       it "should change a credential with correct token" do
         post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
-        request = CredentialsResetRequest.last
+        request = PasswordResetRequest.last
         post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
         post 'login', { method: 'basic', client_id: 'OTHER', credentials: { email: 'neymar@test.com', password: '456' } }
         expect(json.success).to eq true
@@ -84,7 +84,7 @@ module ClientAuth
       it "should raise an exception if token's expired" do
         Timecop.freeze(2014, 06, 20)
         post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
-        request = CredentialsResetRequest.last
+        request = PasswordResetRequest.last
         Timecop.freeze(2014, 06, 20, 11)
         expect { 
           post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
