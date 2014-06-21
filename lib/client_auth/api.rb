@@ -103,9 +103,13 @@ module ClientAuth
       end
     end
     
+    params do
+      requires :type, type: String, desc: 'The type of identity (basic, facebook, etc)'
+      requires :credentials, type: Object, desc: 'The credentials for the auth provider'
+    end
     post 'recover_credentials' do
-      
-      
+      auth_service.recover_credentials(params[:type], params[:credentials])
+      present :success, true
     end
 
 

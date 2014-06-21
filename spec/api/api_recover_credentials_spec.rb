@@ -31,6 +31,8 @@ module ClientAuth
                 password: '234'
             }
         }
+        
+        ClientAuth.send_forgot_password_email = lambda { |user, token|  }
       end
       
       it 'should generate a reset credentials request' do
@@ -46,19 +48,16 @@ module ClientAuth
         
         request = CredentialsResetRequest.last
         expect(request.token).not_to be_blank
-        expect(request.expired_at).to eq Time.new(2014, 06, 20, 12)
-        expect(request.identity.user.email).to eq 'neymar@test.com'
+        expect(request.expires_at).to eq Time.new(2014, 06, 20, 10)
+        expect(request.identity.details['email']).to eq 'neymar@test.com'
+        Timecop.return
       end
       
       it 'should call send_forgot_password_email block' do
         fake_mailer = double
-        fake_mailer.stub(:message).with('more_than', 'one_argument')
         allow(fake_mailer).to receive(:forgot_password)
-        user = User.find_by email: 'neymar@test.com'
         
-        ClientAuth.setup do |config|
-          config.send_forgot_password_email = lambda { |user, token| fake_mailer.forgot_password(user, token) }
-        end
+        ClientAuth.send_forgot_password_email = lambda { |user, token| fake_mailer.forgot_password(user, token) }
         
         expect(fake_mailer).to receive(:forgot_password).once
         post 'recover_credentials', { type: 'basic',  credentials: { email: 'neymar@test.com'} }

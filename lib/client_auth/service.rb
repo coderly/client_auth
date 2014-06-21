@@ -50,6 +50,11 @@ module ClientAuth
       identity.provider_user_id = identity_details.provider_user_id
       identity.save
     end
+    
+    def recover_credentials(type, credentials)
+      provider = Provider.lookup(type)
+      provider.recover_credentials(credentials)
+    end
 
     private
 
