@@ -4,6 +4,7 @@ require 'json'
 require 'hashie/mash'
 require 'pry'
 require 'spec_helper'
+require 'timecop'
 
 module ClientAuth
   
@@ -33,6 +34,7 @@ module ClientAuth
       end
       
       it 'should generate a reset credentials request' do
+        Timecop.freeze(2014, 06, 20)
         expect{
           post 'recover_credentials', {
               type: 'basic',
@@ -41,17 +43,25 @@ module ClientAuth
                }
           }
         }.to change{CredentialsResetRequest.count}.by(1)
+        
+        request = CredentialsResetRequest.last
+        expect(request.token).not_to be_blank
+        expect(request.expired_at).to eq Time.new(2014, 06, 20, 12)
+        expect(request.identity.user.email).to eq 'neymar@test.com'
       end
       
-      it 'should send an email' do
-        expect{
-          post 'recover_credentials', {
-              type: 'basic',
-              credentials: {
-                  email: 'neymar@test.com'
-               }
-          }
-        }.to change{ActionMailer::Base.deliveries.count}.by(1)
+      it 'should call send_forgot_password_email block' do
+        fake_mailer = double
+        fake_mailer.stub(:message).with('more_than', 'one_argument')
+        allow(fake_mailer).to receive(:forgot_password)
+        user = User.find_by email: 'neymar@test.com'
+        
+        ClientAuth.setup do |config|
+          config.send_forgot_password_email = lambda { |user, token| fake_mailer.forgot_password(user, token) }
+        end
+        
+        expect(fake_mailer).to receive(:forgot_password).once
+        post 'recover_credentials', { type: 'basic',  credentials: { email: 'neymar@test.com'} }
       end
     
     end

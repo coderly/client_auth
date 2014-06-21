@@ -1,7 +1,6 @@
 require 'client_auth'
 require 'active_record'
 require 'database_cleaner'
-require 'action_mailer'
 
 ENV["RAILS_ENV"] = "test"
 
@@ -43,9 +42,7 @@ RSpec.configure do |config|
   config.after :each do
     DatabaseCleaner.clean
   end
-  
-  ActionMailer::Base.delivery_method = :test
-  
+    
   def json
     Hashie::Mash.new JSON.parse(last_response.body)
   end
