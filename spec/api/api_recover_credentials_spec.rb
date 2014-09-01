@@ -92,6 +92,18 @@ module ClientAuth
         Timecop.return
       end
     
+
+      it "should use a token just once" do
+        post 'request-password-reset', { type: 'basic', credentials: { email: 'neymar@test.com' } }
+        request = PasswordResetRequest.last
+        post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+        expect(json.success).to eq true
+
+        expect { 
+          post 'reset-password', { token: request.token, credentials: { email: 'neymar@test.com', password: '456' } }
+        }.to raise_error(Error::InvalidRecoverToken)
+      end
+
     end
     
   end
