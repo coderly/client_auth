@@ -49,7 +49,7 @@ module ClientAuth
         
         request = PasswordResetRequest.last
         expect(request.token).not_to be_blank
-        expect(request.expires_at).to eq Time.new(2014, 06, 20, 10)
+        expect(request.expires_at).to eq Time.new(2014, 6, 20, 1)
         expect(request.identity.details['email']).to eq 'neymar@test.com'
         Timecop.return
       end
