@@ -109,7 +109,7 @@ module ClientAuth
     end
 
     def create_user
-      User.create
+      ClientAuth.resource_class.create
     end
 
   end
