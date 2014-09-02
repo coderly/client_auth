@@ -61,8 +61,11 @@ module ClientAuth
       request = PasswordResetRequest.find_by token: token
       raise Error::InvalidRecoverToken, "Unknown token" if request.nil?
       raise Error::InvalidRecoverToken, "Expired token" if request.expires_at < Time.now
+      raise Error::InvalidRecoverToken, "Expired token" if request.used
+
       identity = request.identity
       update_credentials(identity.user, identity.provider, credentials)
+      request.update_attribute :used, true
     end
 
     private

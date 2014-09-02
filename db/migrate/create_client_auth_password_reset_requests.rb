@@ -4,6 +4,7 @@ class CreateClientAuthIdentities < ActiveRecord::Migration
       t.string :token
       t.datetime :expires_at
       t.references :identity
+      t.boolean :used
       t.timestamps
     end
 

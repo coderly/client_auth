@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20140212210648) do
     t.references 'identity'
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean 'used'
   end
 
   add_index 'client_auth_password_reset_request', 'token', unique: true
