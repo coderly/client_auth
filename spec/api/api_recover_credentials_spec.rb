@@ -59,7 +59,7 @@ module ClientAuth
         allow(fake_mailer).to receive(:forgot_password)
         ClientAuth.send_forgot_password_email = lambda { |token, user| fake_mailer.forgot_password(user, token) }
         get 'user'
-        user = User.find(json.id)
+        user = ClientAuth.resource_class.find(json.id)
         PasswordResetRequest.stub(:generate_token) { 'ABC123'}
         
         expect(fake_mailer).to receive(:forgot_password).with(user, 'ABC123')
