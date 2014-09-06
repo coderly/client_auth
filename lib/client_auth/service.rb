@@ -10,6 +10,7 @@ require 'client_auth/error'
 require 'client_auth/error/invalid_credentials'
 require 'client_auth/error/local_identity_missing'
 require 'client_auth/error/already_registered'
+require 'client_auth/error/invalid_recover_token'
 
 module ClientAuth
   class Service
@@ -61,7 +62,7 @@ module ClientAuth
       request = PasswordResetRequest.find_by token: token
       raise Error::InvalidRecoverToken, "Unknown token" if request.nil?
       raise Error::InvalidRecoverToken, "Expired token" if request.expires_at < Time.now
-      raise Error::InvalidRecoverToken, "Expired token" if request.used
+      raise Error::InvalidRecoverToken, "Already used token" if request.used
 
       identity = request.identity
       update_credentials(identity.user, identity.provider, credentials)
